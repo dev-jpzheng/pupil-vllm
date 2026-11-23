@@ -2,6 +2,7 @@
 
 # bench/env_extractor.sh — Minimal benchmark environment (markdown)
 # Usage: ./bench/env_extractor.sh > environment.md
+
 set -euo pipefail
 
 row() { printf -- '- **%s**: %s\n' "$1" "${2:-N/A}"; }
@@ -21,6 +22,3 @@ row "Driver / CUDA" "$(q "nvidia-smi --query-gpu=driver_version --format=csv,noh
 row "SM clocks (current/max)" "$(q "nvidia-smi --query-gpu=clocks.sm,clocks.max.sm --format=csv,noheader | paste -sd' / ' -")"
 row "Other compute processes" "$(q "nvidia-smi --query-compute-apps=pid --format=csv,noheader | paste -sd',' -" | sed 's/^N\/A$/none/')"
 row "Python / PyTorch" "$(q "python3 -c 'import sys;print(sys.version.split()[0])'") / $(q "python3 -c 'import torch;print(torch.__version__)'")"
-if git rev-parse --git-dir >/dev/null 2>&1; then
-  row "Git commit" "$(q 'git rev-parse --short HEAD'); test -z \"$(git status --porcelain 2>/dev/null)\" || echo ' (dirty)'"
-fi
